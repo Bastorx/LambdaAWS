@@ -1,0 +1,11 @@
+{
+  "name": "lambda-aws",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "adrien",
+  "license": "ISC"
+}
