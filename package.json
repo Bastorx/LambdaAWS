@@ -6,6 +6,10 @@
   "scripts": {
     "test": "node index.js"
   },
-  "author": "adrien",
-  "license": "ISC"
+  "author": "Sinthuvan",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "0.0.2",
+    "imagemagick": "^0.1.3"
+  }
 }
