@@ -1,38 +1,13 @@
-var im = require('imagemagick');
+// var im = require('imagemagick');
 var fs = require('fs');
+var gm = require('gm');
 
-
-<<<<<<< HEAD
-// im.resize({
-//   srcPath: 'max.jpg',
-//   dstPath: 'max-small_mix.jpg',
-//   progressive: true,
-//   width: 256, 
-//   height:   256, 
-// }, function(err, stdout, stderr){
-//   if (err) throw err;
-//   console.log('max-small.jpg done !!!');
+// gm('max-small_height.jpg')
+// .size(function (err, size) {
+//   if (err) throw err
+//   console.log(size.width > size.height ? 'wider' : 'taller than you');
 // });
 
-
-im.crop({
-  srcPath: 'max.jpg',
-  dstPath: 'cropped.jpg',
-  width: 400,
-  height: 400,
-  quality: 1,
-  gravity: "Center"
-}, function(err, stdout, stderr){
-  // foo
-=======
-im.resize({
-  srcPath: 'max.jpg',
-  dstPath: 'max-small_mix.jpg',
-  progressive: true,
-  width: 256, 
-  height:   256, 
-}, function(err, stdout, stderr){
-  if (err) throw err;
-  console.log('max-small.jpg done !!!');
->>>>>>> 236231c1c4eec30943dc60b510cc42dccab7945e
-});
+gm('max-small_height.jpg').blur(10, 10).write('lscp.jpg', function(err){
+    if (err) throw err
+    console.log("Written montage image.")});
