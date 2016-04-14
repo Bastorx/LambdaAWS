@@ -53,7 +53,7 @@ var resize = function(event, callback){
     if (!event.height && !event.width) {
         event.width = 100;
     }
-    var resizedFile = `/tmp/resized.${(event.outputExtension || 'png')}`;
+    var resizedFile = `./resized.${(event.outputExtension || 'png')}`;
     var buffer = new Buffer(event.base64Image, 'base64');
     delete event.base64Image;
     delete event.outputExtension;
@@ -106,15 +106,6 @@ var convert = function(event, callback){
 };
 
 
-
-im.resize({
-  srcData: fs.readFileSync('max.jpg', 'binary'),
-  width:   256
-}, function(err, stdout, stderr){
-  if (err) throw err
-  fs.writeFileSync('max-small.jpg', stdout, 'binary');
-  console.log('max-small.jpg to fit within 256x256px')
-});
 
 
 

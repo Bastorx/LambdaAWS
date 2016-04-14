@@ -6,10 +6,12 @@
   "scripts": {
     "test": "node index.js"
   },
-  "author": "Sinthuvan",
+  "author": "Adrien & Sinthuvan",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.3.3",
     "fs": "0.0.2",
+    "gm": "^1.22.0",
     "imagemagick": "^0.1.3"
   }
 }
