@@ -1,146 +1,140 @@
-'use strict';
-let im = require('imagemagick');
-let fs = require('fs');
+var fs = require('fs');
+var gm = require('gm');
+
+/////// BLUR ///////
+// var event = {op:'blur', name:'cropped.jpg', p1:30, p2:10};
+/////// CROP ///////
+// var event = {op:'crop', name:'cat.png', p1:250, p2:250, p3:10, p4:10};
+/////// RESIZE ///////
+// var event = {op:'resize', name:'max-small_height.jpg', p1:700, p2:500};
+/////// ROTATE ///////
+// var event = {op:'rotate', name:'cat_fun.jpg', p1:220};
+/////// SEPIA ///////
+// var event = {op:'sepia', name:'cropped-North.jpg'};
+/////// CONVERT ///////
+//var event = {op:'convert', name:'cropped-North.jpg', p1:'png'};
 
 
-const postProcessResource = (resource, fn) => {
-    let ret = null;
-    if (resource) {
-        if (fn) {
-            ret = fn(resource);
-        }
-        try {
-            fs.unlinkSync(resource);
-        } catch (err) {
-            // Ignore
-        }
-    }
-    return ret;
-};
+//var event = {op:['crop', 'blur'], name:'chat.jpg', crop1:50, crop2:50, crop3:10, crop4:10, blur1:20, blur2:20};
 
+var error = "Operation requested";
 
-const identify = (event, callback) => {
-    if (!event.base64Image) {
-        const msg = 'Invalid identify request: no "base64Image" field supplied';
-        console.log(msg);
-        callback(msg);
-        return;
-    }
-    const tmpFile = `/tmp/inputFile.${(event.inputExtension || 'png')}`;
-    let buffer = new Buffer(event.base64Image, 'base64');
-    fs.writeFileSync(tmpFile, buffer);
-    const args = event.customArgs ? event.customArgs.concat([tmpFile]) : tmpFile;
-    im.identify(args, (err, output) => {
-        fs.unlinkSync(tmpFile);
-        if (err) {
-            console.log('Identify operation failed:', err);
-            callback(err);
-        } else {
-            console.log('Identify operation completed successfully');
-            callback(null, output);
-        }
-    });
-};
-
-const resize = (event, callback) => {
-    if (!event.base64Image) {
-        const msg = 'Invalid resize request: no "base64Image" field supplied';
-        console.log(msg);
-        callback(msg);
-        return;
-    }
-    // If neither height nor width was provided, turn this into a thumbnailing request
-    if (!event.height && !event.width) {
-        event.width = 100;
-    }
-    const resizedFile = `/tmp/resized.${(event.outputExtension || 'png')}`;
-    let buffer = new Buffer(event.base64Image, 'base64');
-    delete event.base64Image;
-    delete event.outputExtension;
-    event.srcData = buffer;
-    event.dstPath = resizedFile;
-    try {
-        im.resize(event, (err, stdout, stderr) => {
-            if (err) {
-                throw err;
-            } else {
-                console.log('Resize operation completed successfully');
-                callback(null, postProcessResource(resizedFile, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
-            }
-        });
-    } catch (err) {
-        console.log('Resize operation failed:', err);
-        callback(err);
-    }
-};
-
-const convert = (event, callback) => {
-    event.customArgs = event.customArgs || [];
-    let inputFile = null;
-    let outputFile = null;
-    if (event.base64Image) {
-        inputFile = `/tmp/inputFile.${(event.inputExtension || 'png')}`;
-        let buffer = new Buffer(event.base64Image, 'base64');
-        fs.writeFileSync(inputFile, buffer);
-        event.customArgs.unshift(inputFile);
-    }
-    if (event.outputExtension) {
-        outputFile = `/tmp/outputFile.${event.outputExtension}`;
-        event.customArgs.push(outputFile);
-    }
-    im.convert(event.customArgs, (err, output) => {
-        if (err) {
-            console.log('Convert operation failed:', err);
-            callback(err);
-        } else {
-            console.log('Convert operation completed successfully');
-            postProcessResource(inputFile);
-            if (outputFile) {
-                callback(null, postProcessResource(outputFile, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
-            } else {
-                // Return the command line output as a debugging aid
-                callback(null, output);
-            }
-        }
-    });
+const blur = (event, callback) => {
+    gm(event.link)
+	.blur(event.blur1, event.blur2)
+	.write(event.name, function(err, stdout){
+	    if (err) throw err
+	    fs.readFile(event.name, function(err, data) {
+		var encodeImage = new Buffer(data, 'binary').toString('base64');
+		callback(encodeImage);
+	    });
+	});
 };
 
 const crop = (event, callback) => {
-    
-    
+    gm(event.link)
+	.crop(event.crop1, event.crop2, event.crop3, event.crop4)
+	.write(event.name, function(err){
+	    if (err) throw err
+	    fs.readFile(event.name, function(err, data) {
+		var encodeImage = new Buffer(data, 'binary').toString('base64');
+		callback(encodeImage);
+	    });
+	});
+};
+
+const resize = (event, callback) => {
+    if (event.resize3=='!') {
+    	gm(event.link)
+	    .resize(event.resize1, event.resize2, event.resize3)
+	    .write(event.name, function(err){
+		if (err) throw err
+		fs.readFile(event.name, function(err, data) {
+		    var encodeImage = new Buffer(data, 'binary').toString('base64');
+		    callback(encodeImage);
+		});
+	    });
+    }
+    else {
+	gm(event.link)
+	    .resize(event.resize1, event.resize2)
+	    .write(event.name, function(err){
+	   	if (err) throw err
+		fs.readFile(event.name, function(err, data) {
+		    var encodeImage = new Buffer(data, 'binary').toString('base64');
+		    callback(encodeImage);
+		});
+	    });
+    }
+};
+
+const rotate = (event, callback) => {
+    gm(event.link)
+	.rotate("white", event.rotate1)
+	.write(event.name, function(err){
+	    if (err) throw err
+	    fs.readFile(event.name, function(err, data) {
+		var encodeImage = new Buffer(data, 'binary').toString('base64');
+		callback(encodeImage);
+	    });
+	});
+};
+
+const sepia = (event, callback) => {
+    gm(event.link)
+	.sepia()
+	.write(event.name, function (err) {
+	    if (err) throw err
+	    fs.readFile(event.name, function(err, data) {
+		var encodeImage = new Buffer(data, 'binary').toString('base64');
+		callback(encodeImage);
+	    });
+	});
+};
+
+const convert = (event, callback) => {
+    var coolVar = event.name;
+    var partsArray = coolVar.split('.');
+    gm(event.name)
+	.write(partsArray[0]+"."+event.convert1, function (err) {
+	    if (err) throw err
+	    fs.readFile(event.name, function(err, data) {
+		var encodeImage = new Buffer(data, 'binary').toString('base64');
+		callback(encodeImage);
+	    });
+	});
 }
 
-
-
-exports.handler = (event, context, callback) => {
-    const operation = event.operation;
-    delete event.operation;
-    if (operation) {
-        console.log(`Operation ${operation} 'requested`);
+exports.handler = (event, callback) => {
+    const op = event.op;
+    delete event.op;
+    var i = 0;
+    if (!op) {
+	console.log(error);
     }
-
-    switch (operation) {
-        case 'ping':
-            callback(null, 'pong');
-            break;
-        case 'getDimensions':
-            event.customArgs = ['-format', '%wx%h'];
-            /* falls through */
-        case 'identify':
-            identify(event, callback);
-            break;
-        case 'thumbnail':  // Synonym for resize
-        case 'resize':
-            resize(event, callback);
-            break;
-        case 'getSample':
-            event.customArgs = ['rose:'];
-            event.outputExtension = event.outputExtension || 'png';
-            /* falls through */
-        case 'convert':
-            convert(event, callback);
-            break;
-        default:
-            callback(new Error(`Unrecognized operation "${operation}"`));
+    while(typeof op[i] !== 'undefined') {
+	switch (op[i]) {
+	case 'blur':
+	    blur(event, callback);
+	    break;
+	case 'resize':
+	    resize(event, callback);
+	    break;
+	case 'crop':
+	    crop(event, callback);
+	    break;
+	case 'rotate':
+	    rotate(event, callback);
+	    break;
+	case 'sepia':
+	    sepia(event, callback);
+	    break;
+	case 'convert':
+	    convert(event, callback);
+	    break;
+	default :
+	    callback(new Error("Unrecognized operation ${op}"));
+	}
+	i++;
     }
 };
