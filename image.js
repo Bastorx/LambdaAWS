@@ -6,9 +6,14 @@ var gm = require('gm');
 /////// CROP ///////
 // var event = {op:'crop', name:'cat.png', p1:250, p2:250, p3:10, p4:10};
 /////// RESIZE ///////
-var event = {op:'resize', name:'max-small_height.jpg', p1:700, p2:500};
+// var event = {op:'resize', name:'max-small_height.jpg', p1:700, p2:500};
 /////// ROTATE ///////
 // var event = {op:'rotate', name:'cat_fun.jpg', p1:220};
+/////// SEPIA ///////
+// var event = {op:'sepia', name:'cropped-North.jpg'};
+/////// CONVERT ///////
+var event = {op:'convert', name:'cropped-North.jpg'};
+
 
 // var event = {op:'crop', name:'cat.png', p1:250, p2:250, p3:10, p4:10};
 var error = "Operation requested";
@@ -59,6 +64,15 @@ const rotate = (event) => {
 	});
 };
 
+const sepia = (event) => {
+	gm(event.name)
+	.sepia()
+	.write(event.name, function (err) {
+	    if (err) throw err
+	    console.log("Written montage image.")
+	});
+};
+
 const op = event.op
 delete event.op;
 if (!op) {
@@ -76,6 +90,12 @@ case 'crop':
 	break;
 case 'rotate':
 	rotate(event);
+	break;
+case 'sepia':
+	sepia(event);
+	break;
+case 'convert':
+	convert(event);
 	break;
 default :
 	callback(new Error("Unrecognized operation ${op}"));
