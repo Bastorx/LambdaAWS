@@ -12,7 +12,7 @@ var gm = require('gm');
 /////// SEPIA ///////
 // var event = {op:'sepia', name:'cropped-North.jpg'};
 /////// CONVERT ///////
-var event = {op:'convert', name:'cropped-North.jpg'};
+//var event = {op:'convert', name:'cropped-North.jpg', p1:'png'};
 
 
 // var event = {op:'crop', name:'cat.png', p1:250, p2:250, p3:10, p4:10};
@@ -73,6 +73,16 @@ const sepia = (event) => {
 	});
 };
 
+const convert = (event) => {
+	gm(event.name)
+		.write(event.name, function (err) {
+	    if (err) throw err
+	    console.log("Written montage image.")
+	});
+}
+
+
+exports.handler = (event) => {
 const op = event.op
 delete event.op;
 if (!op) {
@@ -80,75 +90,24 @@ if (!op) {
 }
 switch (op) {
 	case 'blur':
-	blur(event);
-	break;
-case 'resize':
-	resize(event);
-	break;
-case 'crop':
-	crop(event);
-	break;
-case 'rotate':
-	rotate(event);
-	break;
-case 'sepia':
-	sepia(event);
-	break;
-case 'convert':
-	convert(event);
-	break;
-default :
-	callback(new Error("Unrecognized operation ${op}"));
-}
-
-
-// gm('max-small_height.jpg')
-// .size(function (err, size) {
-//   if (err) throw err
-//   console.log(size.width > size.height ? 'wider' : 'taller than you');
-// });
-
-// var fd = fs.open('./max-small.jpg', 'r+', function(err, fd) {
-//    if (err) {
-//        return console.error(err);
-//    }
-//   console.log("File opened successfully!");
-// });
-
-// var event = {func:'blur', name:'max-small.jpg', p1:20, p2:30};
-
-
-// if (event.func == 'blur') {
-// 	gm(event.name).blur(event.p1, event.p2).write(event.name, function(err){
-//     if (err) throw err
-//     console.log("Written montage image.")
-// 	});
-// }
-// else {
-// 	console.log(error)
-// }
-
-// exports.handler = (event, callback) => {
-//     const op = event.op
-//     delete event.op;
-//     if (op) {
-// 	console.log(error);
-//     }
-//     switch (op) {
-//     case 'blur':
-// 	blur(event, callback);
-// 	break;
-//     case 'resize':
-// 	resize(event, callback);
-// 	break;
-//     case 'crop':
-// 	crop(event, callback);
-// 	break;
-//     case 'rotate':
-// 	rotate(event, callback);
-// 	break;
-//     default :
-// 	callback(new Error("Unrecognized operation ${op}"));
-//     }
-// };
-
+		blur(event);
+		break;
+	case 'resize':
+		resize(event);
+		break;
+	case 'crop':
+		crop(event);
+		break;
+	case 'rotate':
+		rotate(event);
+		break;
+	case 'sepia':
+		sepia(event);
+		break;
+	case 'convert':
+		convert(event);
+		break;
+	default :
+		console.log(new Error("Unrecognized operation ${op}"));
+	}
+};
