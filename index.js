@@ -23,12 +23,7 @@ const blur = (event, callback) => {
 	.blur(event.blur1, event.blur2)
 	.toBuffer('PNG', function(err, buffer){
 	    if (err) throw err;
-        callback(null, {
-                headers: {
-                    'Content-Type': 'image/png'
-                },
-                body: buffer
-        });
+        callback(null, buffer);
 	});
 };
 
