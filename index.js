@@ -1,5 +1,6 @@
 var fs = require('fs');
 var gm = require('gm');
+gm = gm.subClass({imageMagick: true});
 var aws = require('aws-sdk');
 
 var error = "Operation requested";
@@ -7,12 +8,12 @@ var error = "Operation requested";
 const postProcessResource = (resource, fn) => {
     var ret = null;
     if (fn) {
-	ret = fn(resource);
+	   ret = fn(resource);
     }
     try {
-	fs.unlinkSync(resource);
+	   fs.unlinkSync(resource);
     } catch (err) {
-	console.log(err);
+	   console.log(err);
     }
     return ret;
 }
@@ -20,9 +21,14 @@ const postProcessResource = (resource, fn) => {
 const blur = (event, callback) => {
     gm(event.link)
 	.blur(event.blur1, event.blur2)
-	.write(event.name, function(err, stdout){
-	    if (err) throw err
-	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+	.toBuffer('PNG', function(err, buffer){
+	    if (err) throw err;
+        callback(null, {
+                headers: {
+                    'Content-Type': 'image/png'
+                },
+                body: buffer
+        });
 	});
 };
 
@@ -90,29 +96,26 @@ exports.handler = (event, context, callback) => {
     if (!op) {
     	console.log(error);
     }
-    while(typeof op[i] !== 'undefined') {
 	switch (op[i]) {
-	case 'blur':
-	    blur(event, callback);
-	    break;
-	case 'resize':
-	    resize(event, callback);
-	    break;
-	case 'crop':
-	    crop(event, callback);
-	    break;
-	case 'rotate':
-	    rotate(event, callback);
-	    break;
-	case 'sepia':
-	    sepia(event, callback);
-	    break;
-	case 'convert':
-	    convert(event, callback);
-	    break;
-	default :
-	    callback(new Error("Unrecognized operation ${op}"));
+    	case 'blur':
+    	    blur(event, callback);
+    	    break;
+    	case 'resize':
+    	    resize(event, callback);
+    	    break;
+    	case 'crop':
+    	    crop(event, callback);
+    	    break;
+    	case 'rotate':
+    	    rotate(event, callback);
+    	    break;
+    	case 'sepia':
+    	    sepia(event, callback);
+    	    break;
+    	case 'convert':
+    	    convert(event, callback);
+    	    break;
+    	default :
+    	    callback(new Error("Unrecognized operation ${op}"));
 	}
-	i++;
-    }
 };
