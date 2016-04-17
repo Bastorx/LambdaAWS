@@ -92,12 +92,11 @@ const convert = (event, callback) => {
 
 exports.handler = (event, context, callback) => {
     aws.config.loadFromPath('./package.json');
-
     const op = event.op;
     delete event.op;
     var i = 0;
     if (!op) {
-	console.log(error);
+    	console.log(error);
     }
     while(typeof op[i] !== 'undefined') {
 	switch (op[i]) {
