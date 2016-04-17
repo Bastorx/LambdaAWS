@@ -11,7 +11,7 @@ const blur = (event, callback) => {
 	    if (err) throw err
 	    fs.readFile(event.name, function(err, data) {
 		var encodeImage = new Buffer(data, 'binary').toString('base64');
-		callback(encodeImage);
+		callback(null, encodeImage);
 	    });
 	});
 };
@@ -23,7 +23,7 @@ const crop = (event, callback) => {
 	    if (err) throw err
 	    fs.readFile(event.name, function(err, data) {
 		var encodeImage = new Buffer(data, 'binary').toString('base64');
-		callback(encodeImage);
+		callback(null, encodeImage);
 	    });
 	});
 };
@@ -36,7 +36,7 @@ const resize = (event, callback) => {
 		if (err) throw err
 		fs.readFile(event.name, function(err, data) {
 		    var encodeImage = new Buffer(data, 'binary').toString('base64');
-		    callback(encodeImage);
+		    callback(null, encodeImage);
 		});
 	    });
     }
@@ -47,7 +47,7 @@ const resize = (event, callback) => {
 	   	if (err) throw err
 		fs.readFile(event.name, function(err, data) {
 		    var encodeImage = new Buffer(data, 'binary').toString('base64');
-		    callback(encodeImage);
+		    callback(null, encodeImage);
 		});
 	    });
     }
@@ -60,7 +60,7 @@ const rotate = (event, callback) => {
 	    if (err) throw err
 	    fs.readFile(event.name, function(err, data) {
 		var encodeImage = new Buffer(data, 'binary').toString('base64');
-		callback(encodeImage);
+		callback(null, encodeImage);
 	    });
 	});
 };
@@ -72,7 +72,7 @@ const sepia = (event, callback) => {
 	    if (err) throw err
 	    fs.readFile(event.name, function(err, data) {
 		var encodeImage = new Buffer(data, 'binary').toString('base64');
-		callback(encodeImage);
+		callback(null, encodeImage);
 	    });
 	});
 };
@@ -85,7 +85,7 @@ const convert = (event, callback) => {
 	    if (err) throw err
 	    fs.readFile(event.name, function(err, data) {
 		var encodeImage = new Buffer(data, 'binary').toString('base64');
-		callback(encodeImage);
+		callback(null, encodeImage);
 	    });
 	});
 }
