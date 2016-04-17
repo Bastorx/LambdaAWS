@@ -90,7 +90,7 @@ const convert = (event, callback) => {
 	});
 }
 
-exports.handler = (event, callback) => {
+exports.handler = (event, context, callback) => {
     aws.config.loadFromPath('./package.json');
 
     const op = event.op;
