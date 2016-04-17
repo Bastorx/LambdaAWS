@@ -22,7 +22,19 @@ const blur = (event, callback) => {
 	.blur(event.blur1, event.blur2)
 	.write(event.name, function(err, stdout){
 	    if (err) throw err
-	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+        // callback.setHeader('Content-Type',event.content);
+	    callback(null, postProcessResource(event.name, function (file) {
+                                    return ({
+                                    body: fs.readFileSync(file).toString('base64'),
+                                    header: {
+                                        'Content-Type': event.content
+                                    }
+                                });
+                            }));
+    // callback(null, fs.readFile(event.name, function(err, data) {
+    //     var encodeImage = new Buffer(data, 'binary').toString('base64');
+    //     return encodeImage;
+    //     }));
 	});
 };
 
@@ -31,7 +43,11 @@ const crop = (event, callback) => {
 	.crop(event.crop1, event.crop2, event.crop3, event.crop4)
 	.write(event.name, function(err){
 	    if (err) throw err
-	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+//	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+        callback(null, fs.readFile(event.name, function(err, data) {
+        var encodeImage = new Buffer(data, 'binary').toString('base64');
+        return encodeImage;
+        }));
 	});
 };
 
@@ -41,7 +57,11 @@ const resize = (event, callback) => {
 	    .resize(event.resize1, event.resize2, event.resize3)
 	    .write(event.name, function(err){
 		if (err) throw err
-	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+//	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+    callback(null, fs.readFile(event.name, function(err, data) {
+        var encodeImage = new Buffer(data, 'binary').toString('base64');
+        return encodeImage;
+        }));
 	    });
     }
     else {
@@ -49,7 +69,11 @@ const resize = (event, callback) => {
 	    .resize(event.resize1, event.resize2)
 	    .write(event.name, function(err){
 	   	if (err) throw err
-	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+//	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+        callback(null, fs.readFile(event.name, function(err, data) {
+        var encodeImage = new Buffer(data, 'binary').toString('base64');
+        return encodeImage;
+        }));
 	    });
     }
 };
@@ -59,7 +83,11 @@ const rotate = (event, callback) => {
 	.rotate("white", event.rotate1)
 	.write(event.name, function(err){
 	    if (err) throw err
-	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+//	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')))        
+        callback(null, fs.readFile(event.name, function(err, data) {
+            var encodeImage = new Buffer(data, 'binary').toString('base64');
+            return encodeImage;
+        }));
 	});
 };
 
@@ -68,7 +96,11 @@ const sepia = (event, callback) => {
 	.sepia()
 	.write(event.name, function (err) {
 	    if (err) throw err
-	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+	    //callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+        callback(null, fs.readFile(event.name, function(err, data) {
+        var encodeImage = new Buffer(data, 'binary').toString('base64');
+        return encodeImage;
+        }));
 	});
 };
 
@@ -78,7 +110,11 @@ const convert = (event, callback) => {
     gm(event.name)
 	.write(partsArray[0]+"."+event.convert1, function (err) {
 	    if (err) throw err
-	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+//	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
+        callback(null, fs.readFile(event.name, function(err, data) {
+            var encodeImage = new Buffer(data, 'binary').toString('base64');
+            return encodeImage;
+        }));
 	});
 }
 
