@@ -1,21 +1,6 @@
 var fs = require('fs');
 var gm = require('gm');
-
-/////// BLUR ///////
-// var event = {op:'blur', name:'cropped.jpg', p1:30, p2:10};
-/////// CROP ///////
-// var event = {op:'crop', name:'cat.png', p1:250, p2:250, p3:10, p4:10};
-/////// RESIZE ///////
-// var event = {op:'resize', name:'max-small_height.jpg', p1:700, p2:500};
-/////// ROTATE ///////
-// var event = {op:'rotate', name:'cat_fun.jpg', p1:220};
-/////// SEPIA ///////
-// var event = {op:'sepia', name:'cropped-North.jpg'};
-/////// CONVERT ///////
-//var event = {op:'convert', name:'cropped-North.jpg', p1:'png'};
-
-
-//var event = {op:['crop', 'blur'], name:'chat.jpg', crop1:50, crop2:50, crop3:10, crop4:10, blur1:20, blur2:20};
+var aws = require('aws-sdk');
 
 var error = "Operation requested";
 
@@ -106,6 +91,8 @@ const convert = (event, callback) => {
 }
 
 exports.handler = (event, callback) => {
+    aws.config.loadFromPath('./package.json');
+
     const op = event.op;
     delete event.op;
     var i = 0;
