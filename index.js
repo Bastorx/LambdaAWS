@@ -4,15 +4,25 @@ var aws = require('aws-sdk');
 
 var error = "Operation requested";
 
+const postProcessResource = (resource, fn) => {
+    var ret = null;
+    if (fn) {
+	ret = fn(resource);
+    }
+    try {
+	fs.unlinkSync(resource);
+    } catch (err) {
+	console.log(err);
+    }
+    return ret;
+}
+
 const blur = (event, callback) => {
     gm(event.link)
 	.blur(event.blur1, event.blur2)
 	.write(event.name, function(err, stdout){
 	    if (err) throw err
-	    fs.readFile(event.name, function(err, data) {
-		var encodeImage = new Buffer(data, 'binary').toString('base64');
-		callback(null, encodeImage);
-	    });
+	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
 	});
 };
 
@@ -21,10 +31,7 @@ const crop = (event, callback) => {
 	.crop(event.crop1, event.crop2, event.crop3, event.crop4)
 	.write(event.name, function(err){
 	    if (err) throw err
-	    fs.readFile(event.name, function(err, data) {
-		var encodeImage = new Buffer(data, 'binary').toString('base64');
-		callback(null, encodeImage);
-	    });
+	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
 	});
 };
 
@@ -34,10 +41,7 @@ const resize = (event, callback) => {
 	    .resize(event.resize1, event.resize2, event.resize3)
 	    .write(event.name, function(err){
 		if (err) throw err
-		fs.readFile(event.name, function(err, data) {
-		    var encodeImage = new Buffer(data, 'binary').toString('base64');
-		    callback(null, encodeImage);
-		});
+	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
 	    });
     }
     else {
@@ -45,10 +49,7 @@ const resize = (event, callback) => {
 	    .resize(event.resize1, event.resize2)
 	    .write(event.name, function(err){
 	   	if (err) throw err
-		fs.readFile(event.name, function(err, data) {
-		    var encodeImage = new Buffer(data, 'binary').toString('base64');
-		    callback(null, encodeImage);
-		});
+	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
 	    });
     }
 };
@@ -58,10 +59,7 @@ const rotate = (event, callback) => {
 	.rotate("white", event.rotate1)
 	.write(event.name, function(err){
 	    if (err) throw err
-	    fs.readFile(event.name, function(err, data) {
-		var encodeImage = new Buffer(data, 'binary').toString('base64');
-		callback(null, encodeImage);
-	    });
+	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
 	});
 };
 
@@ -70,10 +68,7 @@ const sepia = (event, callback) => {
 	.sepia()
 	.write(event.name, function (err) {
 	    if (err) throw err
-	    fs.readFile(event.name, function(err, data) {
-		var encodeImage = new Buffer(data, 'binary').toString('base64');
-		callback(null, encodeImage);
-	    });
+	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
 	});
 };
 
@@ -83,10 +78,7 @@ const convert = (event, callback) => {
     gm(event.name)
 	.write(partsArray[0]+"."+event.convert1, function (err) {
 	    if (err) throw err
-	    fs.readFile(event.name, function(err, data) {
-		var encodeImage = new Buffer(data, 'binary').toString('base64');
-		callback(null, encodeImage);
-	    });
+	    callback(null, postProcessResource(event.name, (file) => new Buffer(fs.readFileSync(file)).toString('base64')));
 	});
 }
 
