@@ -23,7 +23,7 @@ const crop = (event, callback) => {
 };
 
 const resize = (event, callback) => {
-    if (event.resize3=='!') {
+    if (event.params[2]=='!') {
     	gm(event.link)
 	    .resize(event.params[0], event.params[1], event.params[2])
 	    .toBuffer('PNG', function(err, buffer){
